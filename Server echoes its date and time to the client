@@ -1,4 +1,4 @@
-// Server echoes its date and time to the client
+//Server side
 import java.net.*;
 import java.io.*;
 import java.util.*;
@@ -22,5 +22,26 @@ class DateServer {
             out.close();
             soc.close();
         }
+    }
+}
+
+//Client Side
+import java.net.*;
+import java.io.*;
+
+public class DateClient {
+    public static void main(String args[]) throws Exception {
+        // Create a Socket object to connect to the server
+        Socket soc = new Socket("localhost", 5217);
+
+        // Create a BufferedReader object to read data from the input stream of the server socket
+        BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+
+        // Read the server's date and time and print it
+        System.out.println(in.readLine());
+
+        // Close the input stream and the client socket
+        in.close();
+        soc.close();
     }
 }
