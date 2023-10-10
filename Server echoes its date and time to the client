@@ -1,0 +1,26 @@
+// Server echoes its date and time to the client
+import java.net.*;
+import java.io.*;
+import java.util.*;
+
+class DateServer {
+    public static void main(String args[]) throws Exception {
+        // Create a ServerSocket object on port 5217
+        ServerSocket s = new ServerSocket(5217);
+        while(true) {
+            System.out.println("Waiting For Connection ...");
+            // Accept connections from clients
+            Socket soc = s.accept();
+
+            // Create a DataOutputStream object to write data to the output stream of the client socket
+            DataOutputStream out = new DataOutputStream(soc.getOutputStream());
+
+            // Write the current date and time to the output stream
+            out.writeBytes("Server Date: " + (new Date()) + "\n");
+
+            // Close the output stream and the client socket
+            out.close();
+            soc.close();
+        }
+    }
+}
