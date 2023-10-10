@@ -1,0 +1,70 @@
+//Server
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class NumberServer {
+    public static void main(String[] args) throws Exception{
+        ServerSocket s = new ServerSocket(1234);
+        while(true){
+            System.out.println("Waiting for connection...");
+            Socket soc = s.accept();
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+            String filePath = in.readLine();
+            Path path = Paths.get("C:\\Users\\xxx\\xxxx\\xxx\\my-stuff.txt");
+            String result;
+            if(Files.exists(path)) {
+                if (Files.isRegularFile(path)) {
+                    result = "The file Exist and it's a regular file.";
+                } else if (Files.isDirectory(path)) {
+                    result = "The file Exists and it's a directory";
+                } else if (Files.isExecutable(path)) {
+                    result = "The file exists and it's an executable file.";
+                } else {
+                    result = "The file exists but it's type is unknown.";
+                }
+
+            }else{
+                    result = "The file does not exist";
+                }
+                DataOutputStream out = new DataOutputStream(soc.getOutputStream());
+                out.writeBytes(result + "\n");
+                in.close();
+                out.close();
+                soc.close();
+            }
+        }
+
+    }
+//Client
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.Socket;
+
+public class NumberClient {
+    public static void main(String[] args) throws Exception {
+        Socket soc = new Socket("localhost", 1234);
+        BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("Enter a file path: ");
+        String filePath = keyboard.readLine();
+
+        DataOutputStream out = new DataOutputStream(soc.getOutputStream());
+        out.writeBytes(filePath + "\n");
+        BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+        String result = in.readLine();
+        System.out.println(result);
+
+        keyboard.close();
+        out.close();
+        in.close();
+        soc.close();
+
+    }
+}
