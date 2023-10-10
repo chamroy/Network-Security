@@ -1,0 +1,48 @@
+//server side
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+class ReverseServer{
+    public static void main(String[] args) throws Exception{
+
+        ServerSocket s = new ServerSocket(1234);
+        Socket soc = s.accept();
+        BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+        String str = in.readLine();
+        String reversedStr = new StringBuilder(str).reverse().toString();
+        DataOutputStream out = new DataOutputStream(soc.getOutputStream());
+
+        out.writeBytes("reverse String: " + reversedStr + "\n");
+
+        in.close();
+        out.close();
+        soc.close();
+
+    }
+}
+//client side
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.Socket;
+
+public class ReverseClient {
+    public static void main(String[] args) throws Exception {
+
+        Socket soc = new Socket("localhost", 1234);
+        BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("Enter a String");
+        String str = keyboard.readLine();
+
+        DataOutputStream out = new DataOutputStream(soc.getOutputStream());
+        out.writeBytes(str + "\n");
+        BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+        System.out.println(in.readLine());
+        keyboard.close();
+        out.close();
+        soc.close();
+    }
+}
