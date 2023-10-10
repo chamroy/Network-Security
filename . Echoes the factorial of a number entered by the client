@@ -1,0 +1,57 @@
+//server
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class NumberServer {
+   public static long factorial(int num){
+       long fact = 1;
+       for(int i = 1; i <= num; i++){
+           fact = fact * i;
+       }
+       return fact;
+   }
+
+    public static void main(String[] args) throws Exception {
+
+        ServerSocket s = new ServerSocket(1234);
+        while(true){
+            System.out.println("waiting for connection");
+            Socket soc = s.accept();
+            BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+            int num = Integer.parseInt(in.readLine());
+
+            long fact = factorial(num);
+            String result = "The factorial of " + num + " is " + fact + " . ";
+            DataOutputStream out = new DataOutputStream(soc.getOutputStream());
+            out.writeBytes(result + "\n");
+            in.close();
+            out.close();
+        }
+
+    }
+}
+//Client
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.Socket;
+
+public class NumberClient {
+    public static void main(String[] args) throws Exception{
+        Socket soc = new Socket("localhost", 1234);
+        BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("Enter a number");
+        String str = keyboard.readLine();
+        DataOutputStream out = new DataOutputStream(soc.getOutputStream());
+        out.writeBytes(str + "\n");
+        BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+        System.out.println(in.readLine());
+        keyboard.close();
+        in.close();
+        out.close();
+        soc.close();
+    }
+}
