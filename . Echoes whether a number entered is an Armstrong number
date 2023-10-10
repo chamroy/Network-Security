@@ -1,0 +1,74 @@
+//server
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class NumberServer {
+    public static boolean isArmstrong(int num) {
+        int temp = num;
+        int sum = 0;
+        while (temp != 0) {
+            int digit = temp % 10;
+            sum += digit * digit * digit;
+            temp /= 10;
+        }
+        return sum == num;
+    }
+
+
+    public static void main(String[] args) throws Exception {
+
+        ServerSocket s = new ServerSocket(1234);
+        while(true) {
+            System.out.println("waiting for connection....");
+            Socket soc = s.accept();
+            BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+            int num = Integer.parseInt(in.readLine());
+
+            String result;
+            if(isArmstrong(num)){
+                result = "the number ia an armstrong number.";
+
+            } else {
+                result = "the number is not an armstrong number.";
+            }
+
+            DataOutputStream out  = new DataOutputStream(soc.getOutputStream());
+            out.writeBytes(result + "\n");
+            in.close();
+            out.close();
+            soc.close();
+        }
+
+    }
+}
+//client
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.Socket;
+
+public class NumberClient {
+    public static void main(String[] args) throws Exception {
+
+        Socket soc = new Socket("localhost", 1234);
+        BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("Enter a number:");
+        String number = keyboard.readLine();
+
+        DataOutputStream out = new DataOutputStream(soc.getOutputStream());
+        out.writeBytes(number + "\n");
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+        String result = in.readLine();
+        System.out.println(result);
+
+        keyboard.close();
+        out.close();
+        in.close();
+        soc.close();
+    }
+}
