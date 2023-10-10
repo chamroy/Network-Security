@@ -1,0 +1,62 @@
+//server side
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class vowelServer {
+
+    public static void main(String[] args) throws Exception {
+
+        ServerSocket s = new ServerSocket(1234);
+        while(true){
+            System.out.println("waiting for connection");
+            Socket soc = s.accept();
+            BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+            String sentence = in.readLine();
+            int vowelCount = 0;
+            for(int i = 0; i < sentence.length(); i++){
+                char ch = Character.toLowerCase(sentence.charAt(i));
+                if(ch == 'a' || ch =='e' || ch == 'i' || ch == 'o' || ch == 'u'){
+                    vowelCount++;
+                }
+            }
+
+            DataOutputStream out = new DataOutputStream(soc.getOutputStream());
+            out.writeBytes("count of vowels: " + vowelCount + "\n" );
+            in.close();
+            out.close();
+            soc.close();
+
+        }
+
+    }
+}
+//client side
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.Socket;
+
+public class vowelClient {
+    public static void main(String[] args) throws Exception {
+
+        Socket soc = new Socket("localhost", 1234);
+        BufferedReader keyboard = new BufferedReader(new InputStreamReader((System.in)));
+        System.out.println("Enter a sentence");
+        String sentence = keyboard.readLine();
+        DataOutputStream out = new DataOutputStream(soc.getOutputStream());
+        out.writeBytes(sentence + "\n");
+        BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+        System.out.println(in.readLine());
+        keyboard.close();
+        in.close();
+        out.close();
+        soc.close();
+
+
+
+
+    }
+}
